@@ -1,42 +1,20 @@
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Scanner;
 
 public class Client extends SendReceive {
-    public static void main(String[] args) throws IOException {
-        socket = new Socket("192.168.0.114", 4444);
+    protected String ip;
+    public Client() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("What IP do you wish to connect to?" +
+                " (\"localhost\" for own IP)");
+        ip = scanner.nextLine();
+        System.out.println("What port do you wish to connect to?");
+        port = scanner.nextInt();
+        System.out.println("What do you wish to call yourself?");
+        name = scanner.next();
+        System.out.println();
 
-        Callable<Void> send = new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                sendLoop();
-                return null;
-            }
-        };
-
-        Callable<Void> receive = new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                receiveLoop("Server");
-                return null;
-            }
-        };
-
-        ArrayList<Callable<Void>> taskList = new ArrayList<Callable<Void>>();
-        taskList.add(send);
-        taskList.add(receive);
-
-        //create a pool executor with 3 threads
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-
-        try {
-            executor.invokeAll(taskList);
-        } catch (InterruptedException ie)
-        {
-            //do something if you care about interruption;
-        }
+        socket = new Socket(ip, port);
     }
 }

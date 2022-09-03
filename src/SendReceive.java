@@ -4,31 +4,48 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
 public class SendReceive {
-    protected static Socket socket;
-    protected static void sendLoop() throws IOException {
+    protected Socket socket;
+    protected int port;
+    protected String name;
+    public Callable<Void> send = new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+            sendLoop();
+            return null;
+        }
+    };
+    public Callable<Void> receive = new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+            receiveLoop();
+            return null;
+        }
+    };
+    protected void sendLoop() throws IOException {
         Scanner scanner = new Scanner(System.in);
         String msg;
         while(!socket.isClosed()) {
-            msg = scanner.next();
+            msg = scanner.nextLine();
             send(msg);
         }
     }
 
-    protected static void send(String msg) throws IOException {
+    protected void send(String msg) throws IOException {
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-        printWriter.println(msg);
+        printWriter.println(name + ": " + msg);
         printWriter.flush();
     }
 
-    protected static void receiveLoop(String recipient) throws IOException {
+    protected void receiveLoop() throws IOException {
         InputStreamReader input = new InputStreamReader(socket.getInputStream());
         BufferedReader bf = new BufferedReader(input);
         String msg;
         while(!socket.isClosed()) {
             msg = bf.readLine();
-            System.out.println(recipient + ": " + msg);
+            System.out.println(msg);
             if(msg.equals("exit")) {
                 send("exit");
                 socket.close();
