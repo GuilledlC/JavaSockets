@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable {
             clientHandlers.add(this);
             sendMessage("[SERVER]: " + username + " has joined the chat");
         } catch (IOException e) {
-            close(socket, bufferedReader, bufferedWriter);
+            close();
         }
     }
 
@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable {
                 String message = bufferedReader.readLine();
                 sendMessage(message);
             } catch (IOException e) {
-                close(socket, bufferedReader, bufferedWriter);
+                close();
                 break;
             }
         }
@@ -45,7 +45,7 @@ public class ClientHandler implements Runnable {
                     clientHandler.bufferedWriter.flush();
                 }
             } catch (IOException e) {
-                close(socket, bufferedReader, bufferedWriter);
+                close();
             }
         }
     }
@@ -55,7 +55,7 @@ public class ClientHandler implements Runnable {
         sendMessage("[SERVER]: " + username + " has left the chat");
     }
 
-    protected void close(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+    protected void close() {
         removeClientHandler();
         try {
             if(bufferedReader != null)
