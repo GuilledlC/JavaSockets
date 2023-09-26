@@ -16,7 +16,7 @@ public class Client{
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.username = username;
         } catch (IOException e) {
-            close(socket, bufferedReader, bufferedWriter);
+            close();
         }
     }
 
@@ -34,7 +34,7 @@ public class Client{
                 bufferedWriter.flush();
             }
         } catch (IOException e) {
-            close(socket, bufferedReader, bufferedWriter);
+            close();
         }
     }
 
@@ -47,14 +47,14 @@ public class Client{
                         String message = bufferedReader.readLine();
                         System.out.println(message);
                     } catch (IOException e) {
-                        close(socket, bufferedReader, bufferedWriter);
+                        close();
                     }
                 }
             }
         }).start();
     }
 
-    protected void close(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+    protected void close() {
         try {
             if(bufferedReader != null)
                 bufferedReader.close();
